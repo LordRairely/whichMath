@@ -1,8 +1,9 @@
 from inputer import console_input, file_input, random_system
+from computation import computate
 
 import sys
 
-print("Привет, подружка!")
+print("Доброго времени с уток!")
 
 while True:
     matrix = []
@@ -20,11 +21,10 @@ while True:
         elif answer == "3":
             matrix = random_system()
         elif answer == "4":
-            sys.exit(0) #чем отличается от брейка?
+            sys.exit(0)  # чем отличается от брейка?
         else:
             print("Нормально со мной разговаривай")
             continue
-        #calculate(matrix)
-    except KeyboardInterrupt: #че
-        print("Finished work...")
-
+        computate(matrix)
+    except KeyboardInterrupt:  # че
+        print("Всем спасибо, я всё...")

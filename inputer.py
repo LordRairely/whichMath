@@ -12,42 +12,43 @@ def console_input():
             for i in range(n):
                 while True:  # зочем
                     line = (input(str(i + 1) + ". ").split())
-                    if len(line) - 1 != n:  # переписать ввод без палки
+                    if len(line) - 1 != n:
                         print("Ты пытался меня обмануть\n" +
                               "введи строку заново")
                     else:
-                        a.append(line)  # append() - добавляет элемент в конец списка
+                        a.append(line)
                         break
             return a
         else:
             print("Введи нормально")
 
     except ValueError:
-        print("Бля опять хуйню ввел")
+        print("Здесь такое не прокатит")
 
 
 def file_input():
     try:
         n = 0
         a = []
-        print("Бля формат ввода такой:\n" +
+        print("Формат ввода такой:\n" +
               "\t размерность матрицы\n" +
               "\t a11 a12 ... a1n b1\n" +
               "\t a21 a22 ... a2n b2\n" +
               "\t ... ... ... ...  ...\n" +
               "\t an1 an2 ... ann bn")
-        path = input("Бля напиши путь:").strip()
+        path = input("Напиши путь к файлу:").strip()
         with open(path, 'r', encoding='utf-8') as file:
             file_to_lines = file.read().split("\n")
             n = int(file_to_lines[0])
+            file_to_lines.pop(0)
             if 20 >= n > 1:
                 for i in range(n):
                     a.append([float(el) for el in file_to_lines[i].split()])
                 return a
             else:
-                print("Бля файл говна")
+                print("Проверь-ка ещё раз содержимое файла")
     except FileNotFoundError:
-        print("File " + path + " don't exist.")
+        print("Здесь " + path + " ничего не нашлось")
         return
     except UnboundLocalError:
         return
@@ -67,5 +68,5 @@ def random_system():
                 a.append(line)
         print(a)
     except ValueError:
-        print("Incorrect input.")
+        print("Ну нормааально можно ввести")
     return a

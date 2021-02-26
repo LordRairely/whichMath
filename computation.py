@@ -1,72 +1,93 @@
+import copy
+
+
+def print_matrix(a):
+    for i in range(len(a)):
+        for k in range(len(a) + 1):
+            print(a[i][k], end="\t")
+        print()
+
+
 def computate(a):
     try:
-        print("\nТвоя матрица:\n")
-        print_system()
+        triangle_matrix, swaps = make_triangle(a)
 
-        make_triangle(a)
-        print("\nTriangle system:\n")
-        print_system(a)
-        determinate(a)
-        x_calculation(a)
-        print_x()
-        get_residuals()
+        print("А вот и треугольная матрица")
+        print_matrix(triangle_matrix)
+        print()
+        print("Держи детерминант")
+        print(get_determinate(triangle_matrix, swaps))
+        print()
+        x = get_variables(triangle_matrix)
+        print("Держи вектор неизвестных")
+        print(x)
+        print()
+        print("Держи вектор невязок")
+        print(get_residuals(a, x))
+
     except ZeroDivisionError:
-        print("")
+        print("Ой йой на 0 делим...")
         return
     except ArithmeticError:
-        print("")
+        print("Ашипочка")
         return
 
-    def __check_diagonal(self, i):
-        j = i
-        while j < self.n:
-            if self.system[j][i] != 0 and self.system[i][j] != 0:
-                swap = self.system[j]
-                self.system[j] = self.system[i]
-                self.system[i] = swap
-                self.swap += 1
-                return
-            j += 1
-        print("No solutions")
-        return ArithmeticError
 
-def determinate(a):
-    i = 0
+def get_variables(matrix):
+    a = copy.deepcopy(matrix)
+    n = len(a)
+    x = [0 for _ in range(n)]
+    for i in range(n - 1, -1, -1):
+        s = 0
+        for j in range(i + 1, n):
+            s += a[i][j] * x[j]
+        x[i] = (a[i][-1] - s) / a[i][i]
+    return x
+
+
+def get_residuals(a, x):
+    residuals = []
+    for i in range(len(a)):
+        s = 0
+        for k in range(len(a)):
+            s += a[i][k] * x[k]
+        residuals.append(a[i][-1] - s)
+    return residuals
+
+
+def swap_lines(a, i):
+    for k in range(i + 1, len(a)):
+        if a[k][i] != 0:
+            a[i], a[k] = a[k], a[i]
+            return a
+    print("Сори, решений нет")
+    return ArithmeticError
+
+
+def get_determinate(a, swaps):
     det = 1
-    while i < n:
-        det *= system[i][i]
-        i += 1
-    if swap % 2 == 1:
-        det *= -1
-    print("\nDeterminant: " + str(det))
-    if det == 0:
-        print("This is degenerate system, no solution.")
-        return ArithmeticError
+    for i in range(len(a)):
+        det *= a[i][i]
+    det *= (-1) ** swaps
+    return det
 
-    def __make_triangle(self):
-        try:
-            i = 0
-            while i < self.n:
-                if self.system[i][i] == 0:
-                    self.__check_diagonal(i)
-                m = i
-                while m < self.n - 1:
-                    a = -(self.system[m + 1][i] / self.system[i][i])
-                    j = i
-                    while j < self.n:
-                        self.system[m + 1][j] += a * self.system[i][j]
-                        j += 1
-                    self.system[m + 1][-1] += a * self.system[i][-1]
-                    m += 1
-                k = 0
-                line_sum = 0
-                while k < self.n:
-                    line_sum += self.system[i][k]
-                    k += 1
-                if line_sum == 0:
-                    print("This system is incompatible, no solutions")
-                    return ArithmeticError
-                i += 1
-        except ValueError:
-            print("Incorrect working data.")
-            return
+
+def make_triangle(matrix):
+    try:
+        a = copy.deepcopy(matrix)
+        n = len(a)
+        swaps = 0
+        for i in range(n - 1):
+            if a[i][i] == 0:
+                a = swap_lines(a, i)
+                swaps += 1
+            for k in range(i + 1, n):
+                c = a[k][i] / a[i][i]
+                a[k][i] = 0
+                for j in range(i + 1, n):
+                    a[k][j] -= c * a[i][j]
+                a[k][-1] -= c * a[i][-1]
+
+        return a, swaps
+    except ValueError:
+        print("Ашипочка")
